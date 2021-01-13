@@ -1,18 +1,4 @@
-# Copyright 2018 Division of Medical Image Computing, German Cancer Research Center (DKFZ).
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
-"""Cityscapes evaluation script."""
+"""Wue Lab evaluation script."""
 
 import tensorflow as tf
 import numpy as np
@@ -145,7 +131,7 @@ if __name__ == "__main__":
     parser.add_argument('--write_samples', dest='write_samples', action='store_true')
     parser.add_argument('--eval_samples', dest='write_samples', action='store_false')
     parser.set_defaults(write_samples=True)
-    parser.add_argument('-c', '--config_name', type=str, default='/media/data/home/s370876/evaluation/wue_lab_eval_config.py',
+    parser.add_argument('-c', '--config_name', type=str, default='evaluation/wue_lab_eval_config.py',
                         help='name of the python file that is loaded as config module')
     args = parser.parse_args()
 
