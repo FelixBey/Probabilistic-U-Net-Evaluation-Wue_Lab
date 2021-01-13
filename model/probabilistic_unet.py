@@ -18,7 +18,109 @@ import tensorflow as tf
 import sonnet as snt
 import tensorflow_probability as tfp
 tfd = tfp.distributions
-from utils.training_utils import ce_loss, he_normal
+
+import numpy as np
+import matplotlib
+matplotlib.use('agg')
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+from tensorflow.python.ops.init_ops import VarianceScaling
+
+"""Utils"""
+
+def ce_loss(labels, logits, n_classes, loss_mask=None, data_format='NCHW', one_hot_labels=True, name='ce_loss'):
+    """
+    Cross-entropy loss.
+    :param labels: 4D tensor
+    :param logits: 4D tensor
+    :param n_classes: integer for number of classes
+    :param loss_mask: binary 4D tensor, pixels to mask should be marked by 1s
+    :param data_format: string
+    :param one_hot_labels: bool, indicator for whether labels are to be expected in one-hot representation
+    :param name: string
+    :return: dict of (pixel-wise) mean and sum of cross-entropy loss
+    """
+    with tf.variable_scope(name):
+        # permute class channels into last axis
+        if data_format == 'NCHW':
+            labels = tf.transpose(labels, [0,2,3,1])
+            logits = tf.transpose(logits, [0,2,3,1])
+        elif data_format == 'NCDHW':
+            labels = tf.transpose(labels, [0,2,3,4,1])
+            logits = tf.transpose(logits, [0,2,3,4,1])
+
+        batch_size = tf.cast(tf.shape(labels)[0], tf.float32)
+
+        if one_hot_labels:
+            flat_labels = tf.reshape(labels, [-1, n_classes])
+        else:
+            flat_labels = tf.reshape(labels, [-1])
+            flat_labels = tf.one_hot(indices=flat_labels, depth=n_classes, axis=-1)
+        flat_logits = tf.reshape(logits, [-1, n_classes])
+
+        # do not compute gradients wrt the labels
+        flat_labels = tf.stop_gradient(flat_labels)
+
+        ce_per_pixel = tf.nn.softmax_cross_entropy_with_logits_v2(labels=flat_labels, logits=flat_logits)
+
+        # optional element-wise masking with binary loss mask
+        if loss_mask is None:
+            ce_sum = tf.reduce_sum(ce_per_pixel) / batch_size
+            ce_mean = tf.reduce_mean(ce_per_pixel)
+        else:
+            loss_mask_flat = tf.reshape(loss_mask, [-1,])
+            loss_mask_flat = (1. - tf.cast(loss_mask_flat, tf.float32))
+            ce_sum = tf.reduce_sum(loss_mask_flat * ce_per_pixel) / batch_size
+            n_valid_pixels = tf.reduce_sum(loss_mask_flat)
+            ce_mean = tf.reduce_sum(loss_mask_flat * ce_per_pixel) / n_valid_pixels
+
+        return {'sum': ce_sum, 'mean': ce_mean}
+
+
+def softmax_2_onehot(arr):
+    """Transform a numpy array of softmax values into a one-hot encoded array. Assumes classes are encoded in axis 1.
+    :param arr: ND array
+    :return: ND array
+    """
+    num_classes = arr.shape[1]
+    arr_argmax = np.argmax(arr, axis=1)
+
+    for c in range(num_classes):
+        arr[:,c] = (arr_argmax == c).astype(np.uint8)
+    return arr
+
+
+def numpy_one_hot(label_arr, num_classes):
+    """One-hotify an integer-labeled numpy array. One-hot encoding is encoded in additional last axis.
+    :param label_arr: ND array
+    :param num_classes: integer
+    :return: (N+1)D array
+    """
+    # replace labels >= num_classes with 0
+    label_arr[label_arr >= num_classes] = 0
+
+    res = np.eye(num_classes)[np.array(label_arr).reshape(-1)]
+    return res.reshape(list(label_arr.shape)+[num_classes])
+
+
+def he_normal(seed=None):
+    """He normal initializer.
+    It draws samples from a truncated normal distribution centered on 0
+    with `stddev = sqrt(2 / fan_in)`
+    where `fan_in` is the number of input units in the weight tensor.
+    Arguments:
+        seed: A Python integer. Used to seed the random generator.
+    Returns:
+          An initializer.
+    References:
+          He et al., http://arxiv.org/abs/1502.01852
+    Code:
+        https://github.com/tensorflow/tensorflow/blob/r1.9/tensorflow/python/keras/initializers.py
+    """
+    return VarianceScaling(scale=2., mode='fan_in', distribution='normal', seed=seed)
+    
+    
+"""Model"""
 
 def down_block(features,
                output_channels,
@@ -45,6 +147,7 @@ def down_block(features,
             features = nonlinearity(features)
 
         return features
+
 
 
 def up_block(lower_res_inputs,
