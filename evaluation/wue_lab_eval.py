@@ -81,6 +81,10 @@ def write_test_predictions(cf):
     if not os.path.isdir(gt_folder):
         os.mkdir(gt_folder)
 
+    plot_folder = os.path.join(cf.out_dir, 'plots')
+    if not os.path.isdir(plot_folder):
+        os.mkdir(plot_folder)
+
     images, ids = image_list(cf)
     
     logging.info('Writing to {}'.format(cf.out_dir))
