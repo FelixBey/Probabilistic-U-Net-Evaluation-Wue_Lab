@@ -24,7 +24,11 @@ cd 'drive/My Drive'
 ! git clone https://github.com/FelixBey/Probabilistic-U-Net-Evaluation-Wue_Lab.git
 ```
 
-Nach dem Ausführen dieser Schritte sollten die Notebooks mit Daten und vortrainierten Gewichten im Zielordner 'Probabilistic-U-Net-Evaluation-Wue_Lab' abliegen. Die Evaluationen der Arbeit können nun repliziert werden:
+Nach dem Ausführen dieser Schritte sollten die Notebooks mit Daten im Zielordner 'Probabilistic-U-Net-Evaluation-Wue_Lab' abliegen.
+
+Lade die vortrainierten Gewichte in den Ordner 'model-->pretrained_weights'
+
+Die Evaluationen der Arbeit können nun repliziert werden:
 
 - Führe zuerst das
 [Notebook für das Erstellen der Samples und qualitativen Evaluationen](https://github.com/FelixBey/Probabilistic-U-Net-Evaluation-Wue_Lab/blob/main/wue_lab_evaluation_plots.ipynb) aus
