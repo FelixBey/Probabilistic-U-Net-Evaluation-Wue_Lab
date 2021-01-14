@@ -36,3 +36,5 @@ Die Evaluationen der Arbeit können nun repliziert werden:
 [Notebook für das Erstellen der Samples und qualitativen Evaluationen](https://github.com/FelixBey/Probabilistic-U-Net-Evaluation-Wue_Lab/blob/main/wue_lab_evaluation_plots.ipynb) aus
 aus
 - Anschließend kann auch das [Notebook für das Erstellen der quantitativen Evaluationen](https://github.com/FelixBey/Probabilistic-U-Net-Evaluation-Wue_Lab/blob/main/wue_lab_evaluation_plots.ipynb) ausgeführt werden
+
+Scans, Expertenmasken, Samples und Plots befinden sich nach dem Ausführen der Notebooks im Ordner 'wue_lab_eval_output_dir'.
