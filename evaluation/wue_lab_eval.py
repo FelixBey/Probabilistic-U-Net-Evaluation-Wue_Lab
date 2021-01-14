@@ -37,9 +37,9 @@ def image_list(cf):
         image = image[:, :, 26:-26, 26:-26]
         img.append(image)
         
-        # Segmentierungsmasken laden
+        # Load expert masks
         gt_base_path = img_path.replace('images', 'gt')
-        #Alle 4 Expertenmasken zu bestimmtem Bild speichern:
+        # save all expert masks in specified evaluation directory:
         for l in range(cf.num_graders):
             gt_path = gt_base_path.replace('.png', '_l{}.png'.format(l))
             label = matplotlib.image.imread(gt_path)
@@ -114,13 +114,14 @@ def write_test_predictions(cf):
         saver.restore(sess, latest_ckpt_path)
 
         for k in tqdm(range(len(images))):
+            # save all microscopy scans in specified evaluation directory:
             img = images[k]
             img_id = ids[k]
             
             img_path = os.path.join(cf.out_dir, 'images/{}.npy'.format(img_id))
             np.save(img_path, img)
             
-            # sample
+            # sample and save samples in evaluation directory
             for i in range(cf.num_samples):
                 sample = sess.run(sampled_logits, feed_dict={x: img})
                 sample = np.argmax(sample, axis=1)[:, np.newaxis]
