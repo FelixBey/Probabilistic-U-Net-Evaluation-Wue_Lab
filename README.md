@@ -26,7 +26,9 @@ cd 'drive/My Drive'
 
 Nach dem Ausführen dieser Schritte sollten die Notebooks mit Daten im Zielordner 'Probabilistic-U-Net-Evaluation-Wue_Lab' abliegen.
 
-Lade die vortrainierten Gewichte in den Ordner 'model-->pretrained_weights'
+Lade im nächsten Schritt die [vortrainierten Gewichte](https://drive.google.com/drive/folders/1heyrzuPJxlgQPXrS1bOHIbq5G4bqBHVp?usp=sharing) für die Evaluation herunter.
+
+Lade die vortrainierten Gewichte in den Google Drive-Ordner 'Probabilistic-U-Net-Evaluation-Wue_Lab-->model-->pretrained_weights'. Falls der Ordner 'pretrained_weights' noch nicht existiert, erstelle ihn zuerst.
 
 Die Evaluationen der Arbeit können nun repliziert werden:
 
